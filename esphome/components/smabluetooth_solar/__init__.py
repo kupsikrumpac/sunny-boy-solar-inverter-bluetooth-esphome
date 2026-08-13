@@ -7,11 +7,6 @@ SmaBluetoothSolar = smabluetooth_solar_ns.class_(
     "SmaBluetoothSolar", cg.PollingComponent
 )
 
-# Definujeme Enum správně jako C++ scoping class
-SmaBluetoothProtocolVersion = smabluetooth_solar_ns.enum(
-    "SmaBluetoothProtocolVersion", is_class=True
-)
-
 CONF_SMA_INVERTER_BLUETOOTH_MAC = "sma_inverter_bluetooth_mac"
 CONF_SMA_INVERTER_PASSWORD = "sma_inverter_password"
 
@@ -30,6 +25,12 @@ async def to_code(config):
 
     cg.add(var.set_sma_inverter_bluetooth_mac(config[CONF_SMA_INVERTER_BLUETOOTH_MAC]))
     cg.add(var.set_sma_inverter_password(config[CONF_SMA_INVERTER_PASSWORD]))
-    
-# Vloží přesný C++ typ přímo bez nutnosti překladu přes cg.enum
-    cg.add(var.set_protocol_version(cg.RawExpression("esphome::smabluetooth_solar::SmaBluetoothProtocolVersion::SMANET2")))
+
+    # Přímý zápis přesného C++ typu
+    cg.add(
+        var.set_protocol_version(
+            cg.RawExpression(
+                "esphome::smabluetooth_solar::SmaBluetoothProtocolVersion::SMANET2"
+            )
+        )
+    )
