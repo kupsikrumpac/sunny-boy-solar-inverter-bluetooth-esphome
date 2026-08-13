@@ -71,10 +71,12 @@ void SmaBluetoothSolar::loop() {
   switch (this->inverter_state_) {
     case SmaInverterState::Off:
       if (!this->sma_inverter_) {
-        ESP_LOGI(TAG, "Vytvářím instanci ESP32_SMA_Inverter...");
-        this->sma_inverter_ = new ESP32_SMA_Inverter(
+        ESP_LOGI(TAG, "Získávám instanci ESP32_SMA_Inverter...");
+        this->sma_inverter_ = ESP32_SMA_Inverter::getInstance();
+        this->sma_inverter_->setup(
             this->sma_inverter_bluetooth_mac_,
-            this->sma_inverter_password_
+            this->sma_inverter_password_,
+            this->sma_inverter_delay_values_
         );
       }
       
@@ -98,7 +100,7 @@ void SmaBluetoothSolar::loop() {
 
     case SmaInverterState::Error:
       if (now >= this->error_retry_time_) {
-        ESP_LOGI(TAG, "Pokus o opnovné připojení ke střídači...");
+        ESP_LOGI(TAG, "Pokus o opětovné připojení ke střídači...");
         this->inverter_state_ = SmaInverterState::Off;
       }
       break;
@@ -148,7 +150,7 @@ void SmaBluetoothSolar::update() {
       float v = this->sma_inverter_->get_pv_voltage(i);
       float c = this->sma_inverter_->get_pv_current(i);
       
-      // Sanitizace neplatných chybových přetecení z SMA
+      // Sanitizace neplatných chybových přetečení z SMA
       if (v > 2000.0f) v = 0.0f;
       if (c > 100.0f) c = 0.0f;
 
@@ -170,7 +172,7 @@ void SmaBluetoothSolar::update() {
       this->update_sensor(this->phases_[i].active_power_sensor, this->sma_inverter_->get_phase_active_power(i));
     }
 
-    // Rele a teplota
+    // Relé a teplota
     this->update_sensor(this->grid_relay_binary_sensor_, this->sma_inverter_->get_grid_relay_status());
 #if HAVE_MODULE_TEMP
     this->update_sensor(this->inverter_module_temp_, this->sma_inverter_->get_module_temp());
@@ -215,7 +217,7 @@ void SmaBluetoothSolar::update_sensor(binary_sensor::BinarySensor *sensor, bool 
 void SmaBluetoothSolar::dump_config() {
   ESP_LOGCONFIG(TAG, "SMA Bluetooth Solar Component:");
   ESP_LOGCONFIG(TAG, "  MAC Adresa: %s", this->sma_inverter_bluetooth_mac_.c_str());
-  ESP_LOGCONFIG(TAG, "  Povelové prodlení: %u ms", this->sma_inverter_delay_values_);
+  ESP_LOGCONFIG(TAG, "  Povelové prodlení: %" PRIu32 " ms", this->sma_inverter_delay_values_);
 }
 
 }  // namespace smabluetooth_solar
