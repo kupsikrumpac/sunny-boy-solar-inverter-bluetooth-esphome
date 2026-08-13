@@ -31,5 +31,5 @@ async def to_code(config):
     cg.add(var.set_sma_inverter_bluetooth_mac(config[CONF_SMA_INVERTER_BLUETOOTH_MAC]))
     cg.add(var.set_sma_inverter_password(config[CONF_SMA_INVERTER_PASSWORD]))
     
-    # Generuje: var->set_protocol_version(esphome::smabluetooth_solar::SmaBluetoothProtocolVersion::SMANET2);
-    cg.add(var.set_protocol_version(SmaBluetoothProtocolVersion.SMANET2))
+# Vloží přesný C++ typ přímo bez nutnosti překladu přes cg.enum
+    cg.add(var.set_protocol_version(cg.RawExpression("esphome::smabluetooth_solar::SmaBluetoothProtocolVersion::SMANET2")))
