@@ -2,8 +2,6 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
-AUTO_LOAD = ["sensor"]
-
 smabluetooth_solar_ns = cg.esphome_ns.namespace("smabluetooth_solar")
 SmaBluetoothSolar = smabluetooth_solar_ns.class_(
     "SmaBluetoothSolar", cg.PollingComponent
