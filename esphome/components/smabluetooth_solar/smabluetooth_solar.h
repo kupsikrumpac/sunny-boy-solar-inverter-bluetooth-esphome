@@ -56,7 +56,7 @@ SMA, Speedwire are registered trademarks of SMA Solar Technology AG
 namespace esphome {
 namespace smabluetooth_solar {
 
-enum SmaBluetoothProtocolVersion {
+enum class SmaBluetoothProtocolVersion {
     SMANET2 = 0
 };
 
