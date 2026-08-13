@@ -1,8 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import sensor, text_sensor, binary_sensor
+from esphome.components import sensor
 from esphome.const import (
-    CONF_ID,
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_DURATION,
     DEVICE_CLASS_ENERGY,
@@ -25,9 +24,8 @@ from esphome.const import (
 
 from . import SmaBluetoothSolar, smabluetooth_solar_ns
 
-CONF_SMA_BLUETOOTH_SOLAR_ID = "smabluetooth_solar_id"
+CONF_SMABLUETOOTH_SOLAR_ID = "smabluetooth_solar_id"
 
-# AC a DC Klíče
 CONF_POWER_AC_1 = "power_ac_1"
 CONF_VOLTAGE_AC_1 = "voltage_ac_1"
 CONF_CURRENT_AC_1 = "current_ac_1"
@@ -36,7 +34,6 @@ CONF_POWER_DC_1 = "power_dc_1"
 CONF_VOLTAGE_DC_1 = "voltage_dc_1"
 CONF_CURRENT_DC_1 = "current_dc_1"
 
-# Statistiky
 CONF_TODAY_PRODUCTION = "today_production"
 CONF_TOTAL_ENERGY_PRODUCTION = "total_energy_production"
 CONF_GRID_FREQUENCY = "grid_frequency"
@@ -45,17 +42,9 @@ CONF_TODAY_GENERATION_TIME = "today_generation_time"
 CONF_TOTAL_GENERATION_TIME = "total_generation_time"
 CONF_SIGNAL_STRENGTH = "sma_inverter_bluetooth_signal_strength"
 
-# Textové a Binární
-CONF_STATUS = "status"
-CONF_SERIAL_NUMBER = "serial_number"
-CONF_SOFTWARE_VERSION = "software_version"
-CONF_DEVICE_TYPE = "device_type"
-CONF_INVERTER_TIME = "inverter_time"
-CONF_GRID_RELAY = "grid_relay"
-
 CONFIG_SCHEMA = cv.Schema(
     {
-        cv.GenerateID(CONF_SMA_BLUETOOTH_SOLAR_ID): cv.use_id(SmaBluetoothSolar),
+        cv.GenerateID(CONF_SMABLUETOOTH_SOLAR_ID): cv.use_id(SmaBluetoothSolar),
         
         # AC
         cv.Optional(CONF_POWER_AC_1): sensor.sensor_schema(
@@ -140,22 +129,12 @@ CONFIG_SCHEMA = cv.Schema(
             device_class=DEVICE_CLASS_SIGNAL_STRENGTH,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
-
-        # Textové
-        cv.Optional(CONF_STATUS): text_sensor.text_sensor_schema(),
-        cv.Optional(CONF_SERIAL_NUMBER): text_sensor.text_sensor_schema(),
-        cv.Optional(CONF_SOFTWARE_VERSION): text_sensor.text_sensor_schema(),
-        cv.Optional(CONF_DEVICE_TYPE): text_sensor.text_sensor_schema(),
-        cv.Optional(CONF_INVERTER_TIME): text_sensor.text_sensor_schema(),
-
-        # Binární
-        cv.Optional(CONF_GRID_RELAY): binary_sensor.binary_sensor_schema(),
     }
 )
 
 
 async def to_code(config):
-    hub = await cg.get_variable(config[CONF_SMA_BLUETOOTH_SOLAR_ID])
+    hub = await cg.get_variable(config[CONF_SMABLUETOOTH_SOLAR_ID])
 
     # AC
     if CONF_POWER_AC_1 in config:
@@ -201,25 +180,3 @@ async def to_code(config):
     if CONF_SIGNAL_STRENGTH in config:
         sens = await sensor.new_sensor(config[CONF_SIGNAL_STRENGTH])
         cg.add(hub.set_inverter_bluetooth_signal_strength(sens))
-
-    # Textové
-    if CONF_STATUS in config:
-        sens = await text_sensor.new_text_sensor(config[CONF_STATUS])
-        cg.add(hub.set_inverter_status_sensor(sens))
-    if CONF_SERIAL_NUMBER in config:
-        sens = await text_sensor.new_text_sensor(config[CONF_SERIAL_NUMBER])
-        cg.add(hub.set_serial_number(sens))
-    if CONF_SOFTWARE_VERSION in config:
-        sens = await text_sensor.new_text_sensor(config[CONF_SOFTWARE_VERSION])
-        cg.add(hub.set_software_version(sens))
-    if CONF_DEVICE_TYPE in config:
-        sens = await text_sensor.new_text_sensor(config[CONF_DEVICE_TYPE])
-        cg.add(hub.set_device_type(sens))
-    if CONF_INVERTER_TIME in config:
-        sens = await text_sensor.new_text_sensor(config[CONF_INVERTER_TIME])
-        cg.add(hub.set_inverter_time_sensor(sens))
-
-    # Binární
-    if CONF_GRID_RELAY in config:
-        sens = await binary_sensor.new_binary_sensor(config[CONF_GRID_RELAY])
-        cg.add(hub.set_grid_relay_sensor(sens))
