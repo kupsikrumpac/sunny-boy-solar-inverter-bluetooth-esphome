@@ -1,27 +1,47 @@
-# esphome_smabluetooth
-ESPHome external component to read SMA solar inverters via classic Bluetooth (SMANET2 / SPP protocol).
+# SMA Solar Inverter Bluetooth component for ESPHome
 
-**Beta quality** — the component is significantly more stable than earlier releases but has not yet been validated over extended multi-day/multi-week runs. Use in production at your own discretion.
+Modernizovaná komponenta pro ESPHome umožňující vyčítání dat ze střídačů **SMA Sunny Boy** přes Bluetooth (SMANET2 protocol) pomocí čipu ESP32.
 
-## Status
-- Tested and working on **SB3000TL-20**; known limitations on **SB1600TL-10** (with BT module)
-- Runs on ESP-IDF (not Arduino); BLE disabled to preserve RAM
-- Non-blocking BT protocol task on core 0; ESPHome main loop never stalled
-- Automatic night mode: disconnects from inverter at sunset, reconnects at sunrise — no polling during darkness
+##  Instalace
 
-## Hardware compatibility
-Only the original ESP32 supports classic Bluetooth (SPP). Other variants do **not** work:
+Přidejte následující blok do vaší ESPHome YAML konfigurace:
 
-| Supported | Not supported |
-|-----------|---------------|
-| ESP32 (all flash/antenna variants: WROOM, WROVER, U, D, S) | ESP32-S2, S3 |
-| | ESP32-C2, C3, C5, C6, C61 |
+```yaml
+external_components:
+  - source: github://kupsikrumpac/sunny-boy-solar-inverter-bluetooth-esphome
+    components: [ smabluetooth_solar ]
 
-## Known limitations
-- Single inverter per ESP32 (singleton BT connection)
-- Not yet validated over weeks of continuous operation
+# Konfigurace Bluetooth střídače SMA
+smabluetooth_solar:
+  mac_address: "00:80:25:XX:XX:XX"  # MAC adresa vašeho SMA střídače
+  password: "0000"                  # Výchozí uživatelské heslo (obvykle 0000)
+  update_interval: 10s
 
-## Usage
-See `esphome/sample/smabluesolar.yaml` for a full configuration example.
+# Příklad senzorů pro Home Assistant
+sensor:
+  - platform: smabluetooth_solar
+    today_production:
+      name: "SMA Dnešní výroba"
+    total_energy_production:
+      name: "SMA Celková výroba"
+    grid_frequency:
+      name: "SMA Frekvence sítě"
+    power_dc_1:
+      name: "SMA DC Výkon FVE"
+    voltage_dc_1:
+      name: "SMA DC Napětí FVE"
+    current_dc_1:
+      name: "SMA DC Proud FVE"
+    power_ac_1:
+      name: "SMA AC Výkon do sítě"
+    voltage_ac_1:
+      name: "SMA AC Napětí"
+    current_ac_1:
+      name: "SMA AC Proud"
 
-For local development, replace the `external_components` GitHub URL with a `path:` pointing to the repository root.
+text_sensor:
+  - platform: smabluetooth_solar
+    status:
+      name: "SMA Stav střídače"
+    serial_number:
+      name: "SMA Sériové číslo"
