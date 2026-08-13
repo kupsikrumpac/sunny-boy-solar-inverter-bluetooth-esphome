@@ -7,9 +7,10 @@ SmaBluetoothSolar = smabluetooth_solar_ns.class_(
     "SmaBluetoothSolar", cg.PollingComponent
 )
 
-# Klíčová změna: is_class=True přinutí ESPHome vygenerovat SmaBluetoothProtocolVersion::SMANET2
-SmaBluetoothProtocolVersion = smabluetooth_solar_ns.enum("SmaBluetoothProtocolVersion", is_class=True)
-SMANET2 = SmaBluetoothProtocolVersion.SMANET2
+# Definujeme Enum správně jako C++ class enum, aby generátor vygeneroval SmaBluetoothProtocolVersion::SMANET2
+SmaBluetoothProtocolVersion = smabluetooth_solar_ns.enum(
+    "SmaBluetoothProtocolVersion", is_class=True
+)
 
 CONF_SMA_INVERTER_BLUETOOTH_MAC = "sma_inverter_bluetooth_mac"
 CONF_SMA_INVERTER_PASSWORD = "sma_inverter_password"
@@ -29,3 +30,6 @@ async def to_code(config):
 
     cg.add(var.set_sma_inverter_bluetooth_mac(config[CONF_SMA_INVERTER_BLUETOOTH_MAC]))
     cg.add(var.set_sma_inverter_password(config[CONF_SMA_INVERTER_PASSWORD]))
+    
+    # Výslovně předáme SmaBluetoothProtocolVersion::SMANET2
+    cg.add(var.set_protocol_version(SmaBluetoothProtocolVersion.SMANET2))
