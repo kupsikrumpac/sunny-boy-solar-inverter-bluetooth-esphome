@@ -7,7 +7,7 @@ SmaBluetoothSolar = smabluetooth_solar_ns.class_(
     "SmaBluetoothSolar", cg.PollingComponent
 )
 
-# Definujeme Enum správně jako C++ class enum, aby generátor vygeneroval SmaBluetoothProtocolVersion::SMANET2
+# Definujeme Enum správně jako C++ scoping class
 SmaBluetoothProtocolVersion = smabluetooth_solar_ns.enum(
     "SmaBluetoothProtocolVersion", is_class=True
 )
@@ -31,5 +31,5 @@ async def to_code(config):
     cg.add(var.set_sma_inverter_bluetooth_mac(config[CONF_SMA_INVERTER_BLUETOOTH_MAC]))
     cg.add(var.set_sma_inverter_password(config[CONF_SMA_INVERTER_PASSWORD]))
     
-    # Výslovně předáme SmaBluetoothProtocolVersion::SMANET2
+    # Generuje: var->set_protocol_version(esphome::smabluetooth_solar::SmaBluetoothProtocolVersion::SMANET2);
     cg.add(var.set_protocol_version(SmaBluetoothProtocolVersion.SMANET2))
