@@ -1,0 +1,11 @@
+idf_component_register(
+    SRCS 
+        "smabluetooth_solar.cpp"
+        "SMA_Inverter.cpp"
+    INCLUDE_DIRS 
+        "."
+    REQUIRES 
+        bt 
+        nvs_flash
+        esphome
+)
