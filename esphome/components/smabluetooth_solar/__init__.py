@@ -7,8 +7,8 @@ SmaBluetoothSolar = smabluetooth_solar_ns.class_(
     "SmaBluetoothSolar", cg.PollingComponent
 )
 
-# Definice Enumu pro protokol
-SmaBluetoothProtocolVersion = smabluetooth_solar_ns.enum("SmaBluetoothProtocolVersion")
+# Klíčová změna: is_class=True přinutí ESPHome vygenerovat SmaBluetoothProtocolVersion::SMANET2
+SmaBluetoothProtocolVersion = smabluetooth_solar_ns.enum("SmaBluetoothProtocolVersion", is_class=True)
 SMANET2 = SmaBluetoothProtocolVersion.SMANET2
 
 CONF_SMA_INVERTER_BLUETOOTH_MAC = "sma_inverter_bluetooth_mac"
